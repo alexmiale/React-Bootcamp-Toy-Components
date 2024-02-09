@@ -84,6 +84,16 @@ function App() {
       <br />
 
       <UpdateForm onSubmit={(data) => updateItem(data)} />
+      <br />
+      {/**EXERCISE: Create a component that will load text from the server. The follow aspects are required:
+       * Loading spinner
+       * Display error
+       * Text should have it's own route and service
+       */}
+      {/**EXERCISE: Create a button that will add to the aforementioned text from the server. The follow aspects are required:
+       * Should revert to original content in the case of an error
+       * Button should have it's own route
+       */}
     </>
   );
 }
