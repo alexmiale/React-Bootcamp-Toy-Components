@@ -1,77 +1,85 @@
 import { useState } from "react";
 import Alert from "./components/Alert";
 import Button from "./components/Button";
-import RHForm from "./components/RHForm";
-import Like from "./components/Like";
-import ListGroup from "./components/ListGroup";
+import UpdateForm from "./components/UpdateForm";
+
+import itemService, { Item } from "./services/item-service";
+import useItems from "./hooks/useItems";
+import InsertForm from "./components/InsertFrom";
 
 function App() {
-  // State variable and update function for counting
-  const [count, setCount] = useState(0);
+  const { items, error, isLoading, setItems, setError } = useItems();
 
-  // State variable and update function for alerts
-  const [displayAlert, setDisplayAlert] = useState(false);
+  const deleteItem = (item: Item) => {
+    const originalItems = [...items];
+    setItems(items.filter((x) => x.id !== item.id));
 
-  // State variable and update function for like button
-  const [isLiked, setIsLiked] = useState(false);
+    itemService.delete(item.id).catch((err) => {
+      setError(err.message);
+      setItems(originalItems);
+    });
+  };
 
-  // State variable and update function for list
-  const [items, setItems] = useState([
-    "Apples",
-    "Oranges",
-    "Political Discord",
-    "Bread",
-  ]);
+  const addItem = (newName: string) => {
+    const originalItems = [...items];
+
+    let max: number = items[0].id;
+    for (let i = 0; i < items.length; i++) {
+      if (max < items[i].id) max = items[i].id;
+    }
+
+    const newItem = { id: max + 1, name: newName };
+    setItems([...items, newItem]);
+
+    itemService
+      .create(newItem)
+      .then(() => {
+        setItems([...items, newItem]);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setItems([...originalItems]);
+      });
+  };
+
+  const updateItem = (item: Item) => {
+    const originalItems = [...items];
+    const updatedItem = { ...item, name: item.name };
+    setItems(items.map((u) => (u.id === item.id ? updatedItem : u)));
+
+    itemService.update(updatedItem).catch((err) => {
+      setError(err.message);
+      setItems([...originalItems]);
+    });
+  };
 
   return (
     <>
-      {/*Naive approach*/}
-      <button
-        type="button"
-        onClick={() => {
-          console.log("BUTTON CLICKED");
-        }}
-      >
-        BUTTON
-      </button>
+      {error && <p className="text-danger">{error}</p>}
+      {isLoading && <div className="spinner-border"></div>}
+
+      <ul className="list-group">
+        {items.map((item) => (
+          <li
+            key={item.id}
+            className="list-group-item d-flex justify-content-between"
+          >
+            {item.name}
+            <div>
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => deleteItem(item)}
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
       <br />
-
-      {/*This renders a simple button component with incrementing behaviour*/}
-      {/*EXERCISE: Create a button that adds characters to it's text*/}
-      <Button onClick={() => setCount(count + 1)}>{count.toString()}</Button>
+      <InsertForm onSubmit={(data) => addItem(data.name)}></InsertForm>
       <br />
-
-      {/*Here we conditionally render the Alert component*/}
-      {displayAlert && (
-        <Alert onClick={() => setDisplayAlert(false)}>
-          This is an <b>ALERT</b>
-        </Alert>
-      )}
-
-      {/*EXERCISE: Create a button to conditionally render another element of your choice*/}
-      <Button color="warning" onClick={() => setDisplayAlert(true)}>
-        SHOW ALARM
-      </Button>
-      <br />
-
-      {/*REFERENCE ONLY - NO EXERCISE*/}
-      <Like color="red" status={isLiked} onClick={() => setIsLiked(!isLiked)} />
-      <br />
-
-      {/*EXERCISE: Create a button that will remove from the list*/}
-      <ListGroup
-        items={items}
-        heading="Shopping List"
-        onSelectItem={(item) => console.log(item)}
-      />
-      <Button color="danger" onClick={() => setItems([...items, "Spam"])}>
-        Add Spam!
-      </Button>
-      <br />
-
-      {/*EXERCISE: Add fields to form */}
-      {/*CHALLENGE EXERCISE: Modify code for form to add to a list*/}
-      <RHForm onSubmit={(data) => console.log(data)} />
+      <UpdateForm onSubmit={(data) => updateItem(data)} />
     </>
   );
 }
