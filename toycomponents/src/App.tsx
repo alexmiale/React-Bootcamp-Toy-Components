@@ -92,7 +92,15 @@ function App() {
        */}
       {/**EXERCISE: Create a button that will add to the aforementioned text from the server. The follow aspects are required:
        * Should revert to original content in the case of an error
-       * Button should have it's own route
+       * Server should have it's own route and associated logic
+       */}
+      {/**EXERCISE: Create a button that will remove the first character from the aforementioned text from the server. The follow aspects are required:
+       * Should revert to original content in the case of an error
+       * Server should have it's own route and associated logic
+       */}
+      {/**EXERCISE: Create a button that will change the first character from the aforementioned text from the server. The follow aspects are required:
+       * Should revert to original content in the case of an error
+       * Server should have it's own route and associated logic
        */}
     </>
   );
