@@ -58,6 +58,7 @@ function App() {
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
 
+      {/*Here we render the items in a list*/}
       <ul className="list-group">
         {items.map((item) => (
           <li
@@ -65,6 +66,7 @@ function App() {
             className="list-group-item d-flex justify-content-between"
           >
             {item.name}
+            {/*Delete Button*/}
             <div>
               <button
                 className="btn btn-outline-danger"
@@ -77,8 +79,10 @@ function App() {
         ))}
       </ul>
       <br />
+
       <InsertForm onSubmit={(data) => addItem(data.name)}></InsertForm>
       <br />
+
       <UpdateForm onSubmit={(data) => updateItem(data)} />
     </>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import userService, { Item } from "../services/item-service";
+import itemService, { Item } from "../services/item-service";
 import { CanceledError } from "../services/api-client";
 
 
@@ -11,7 +11,7 @@ const useItems = () =>{
     useEffect(() => {
       setIsLoading(true);
   
-      const { request, cancel } = userService.getAll<Item>();
+      const { request, cancel } = itemService.getAll<Item>();
       request
         .then((res) => {
           setItems(res.data);
